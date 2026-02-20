@@ -1,0 +1,325 @@
+{
+  "info": {
+    "name": "GestionOpiniones API",
+    "description": "Sistema de gestión de opiniones - Auth, Usuarios, Publicaciones y Comentarios",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "TOKEN", "value": "", "type": "string" },
+    { "key": "POST_ID", "value": "", "type": "string" },
+    { "key": "COMMENT_ID", "value": "", "type": "string" },
+    { "key": "USER_ID", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "AUTH",
+      "item": [
+        {
+          "name": "1. Registrar usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "  pm.collectionVariables.set('TOKEN', res.data.token);",
+                  "  pm.collectionVariables.set('USER_ID', res.data.user._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "http://localhost:3005/api/v1/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan Perez\",\n  \"username\": \"juanperez\",\n  \"email\": \"juan@example.com\",\n  \"password\": \"123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "2. Login con email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "  pm.collectionVariables.set('TOKEN', res.data.token);",
+                  "  pm.collectionVariables.set('USER_ID', res.data.user._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "http://localhost:3005/api/v1/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"juan@example.com\",\n  \"password\": \"123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "3. Login con username",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "  pm.collectionVariables.set('TOKEN', res.data.token);",
+                  "  pm.collectionVariables.set('USER_ID', res.data.user._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "http://localhost:3005/api/v1/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"juanperez\",\n  \"password\": \"123456\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "USUARIOS",
+      "item": [
+        {
+          "name": "1. Ver mi perfil",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{TOKEN}}" }],
+            "url": "http://localhost:3005/api/v1/users/profile"
+          }
+        },
+        {
+          "name": "2. Editar mi perfil",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "http://localhost:3005/api/v1/users/profile",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan Alberto Perez\",\n  \"username\": \"juanalperez\",\n  \"bio\": \"Me gusta la tecnologia y el cafe\"\n}"
+            }
+          }
+        },
+        {
+          "name": "3. Cambiar contrasena",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "http://localhost:3005/api/v1/users/change-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"123456\",\n  \"newPassword\": \"nueva123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "4. Ver perfil publico por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{TOKEN}}" }],
+            "url": "http://localhost:3005/api/v1/users/{{USER_ID}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PUBLICACIONES",
+      "item": [
+        {
+          "name": "1. Listar publicaciones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/posts?page=1&limit=10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3005",
+              "path": ["api", "v1", "posts"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "category", "value": "Tecnologia", "disabled": true },
+                { "key": "author", "value": "{{USER_ID}}", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. Ver publicacion por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3005/api/v1/posts/{{POST_ID}}"
+          }
+        },
+        {
+          "name": "3. Crear publicacion",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data._id) {",
+                  "  pm.collectionVariables.set('POST_ID', res.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "http://localhost:3005/api/v1/posts",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Mi primera opinion\",\n  \"category\": \"Tecnologia\",\n  \"content\": \"Creo que la inteligencia artificial va a cambiar el mundo de muchas formas positivas.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "4. Editar publicacion (solo autor)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "http://localhost:3005/api/v1/posts/{{POST_ID}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Mi primera opinion - Editada\",\n  \"category\": \"Tecnologia\",\n  \"content\": \"Contenido actualizado con nueva informacion relevante.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "5. Eliminar publicacion (solo autor)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{TOKEN}}" }],
+            "url": "http://localhost:3005/api/v1/posts/{{POST_ID}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "COMENTARIOS",
+      "item": [
+        {
+          "name": "1. Ver comentarios de una publicacion",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/comments/post/{{POST_ID}}?page=1&limit=10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3005",
+              "path": ["api", "v1", "comments", "post", "{{POST_ID}}"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. Comentar en una publicacion",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data._id) {",
+                  "  pm.collectionVariables.set('COMMENT_ID', res.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "http://localhost:3005/api/v1/comments/post/{{POST_ID}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Estoy totalmente de acuerdo con esta opinion, muy buen punto.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "3. Editar comentario (solo autor)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "http://localhost:3005/api/v1/comments/{{COMMENT_ID}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Comentario editado con mas informacion y contexto.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "4. Eliminar comentario (solo autor)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{TOKEN}}" }],
+            "url": "http://localhost:3005/api/v1/comments/{{COMMENT_ID}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "HEALTH",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3005/api/v1/health"
+          }
+        }
+      ]
+    }
+  ]
+}
